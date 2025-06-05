@@ -5,6 +5,43 @@
 A high-performance caching component for KubeRocketCI pipeline artifacts, built in Go with Echo framework.
 Designed for high-load production environments with proper authentication, resource management, and observability.
 
+## Table of Contents
+
+- [Install](#install)
+- [Configuration](#configuration)
+  - [Basic Configuration](#basic-configuration)
+  - [High-Load Configuration](#high-load-configuration)
+  - [Production Example](#production-example)
+- [High-Load Features](#high-load-features)
+  - [Performance Optimizations](#performance-optimizations)
+  - [Observability](#observability)
+  - [Resource Management](#resource-management)
+- [Limitations](#limitations)
+  - [Tar.gz Archive Limits](#targz-archive-limits)
+  - [Practical Examples](#practical-examples)
+- [Usage](#usage)
+  - [API Endpoints](#api-endpoints)
+  - [Upload](#upload)
+  - [Response Format](#response-format)
+- [Container Deployment](#container-deployment)
+  - [Build](#build)
+  - [Production Deployment](#production-deployment)
+- [Setup](#setup)
+  - [Run directly](#run-directly)
+  - [Run with authentication](#run-with-authentication)
+  - [Production Monitoring](#production-monitoring)
+- [API](#api)
+  - [Upload](#upload-1)
+  - [Delete File](#delete-file)
+  - [Delete Old Files](#delete-old-files)
+- [Upload Flow Diagram](#upload-flow-diagram)
+- [Best Practices for High-Load Deployments](#best-practices-for-high-load-deployments)
+  - [Resource Planning](#resource-planning)
+  - [Security](#security)
+  - [Monitoring](#monitoring)
+- [Use Cases](#use-cases)
+- [LICENSE](#license)
+
 ## Install
 
 ```shell
@@ -221,6 +258,7 @@ The service provides structured JSON logs for monitoring:
 ```
 
 Monitor these logs for:
+
 - High latency requests
 - Error rates and patterns
 - Resource usage patterns
@@ -344,6 +382,113 @@ graph TD
 2. **Log analysis**: Monitor JSON logs for performance and error patterns
 3. **Resource metrics**: Track CPU, memory, and disk usage
 4. **Alert on errors**: Set up alerts for 4xx/5xx error rates
+
+## Use Cases
+
+### 1. CI/CD Artifact Storage
+
+Store and manage build artifacts, container images, and deployment packages with automatic cleanup of old artifacts.
+
+**Upload build artifacts with extraction:**
+
+```bash
+# Upload and extract build artifacts to versioned directory
+curl -u cache-user:secure-password \
+  -X POST \
+  -F "file=@app-v1.2.3.tar.gz" \
+  -F "targz=true" \
+  -F "path=builds/v1.2.3/" \
+  http://cache-server:8080/upload
+```
+
+**Download specific artifacts:**
+
+```bash
+# Access extracted binary
+curl http://cache-server:8080/builds/v1.2.3/bin/application
+
+# Check if artifact exists
+curl -I http://cache-server:8080/builds/v1.2.3/config.json
+```
+
+**Cleanup old build artifacts:**
+
+```bash
+# Remove builds older than 30 days
+curl -u cache-user:secure-password \
+  -X DELETE \
+  "http://cache-server:8080/delete?path=builds&days=30&recursive=true"
+```
+
+### 2. Log File Management
+
+Centralized log storage with automated retention policies for application and system logs.
+
+**Upload application logs:**
+
+```bash
+# Upload daily application logs
+curl -u cache-user:secure-password \
+  -X POST \
+  -F "file=@application-2024-01-15.log" \
+  -F "path=logs/application/2024/01/application-2024-01-15.log" \
+  http://cache-server:8080/upload
+```
+
+**Check log availability:**
+
+```bash
+# Verify log file exists before processing
+curl -I http://cache-server:8080/logs/application/2024/01/application-2024-01-15.log
+```
+
+**Implement log retention:**
+
+```bash
+# Remove logs older than 7 days for compliance
+curl -u cache-user:secure-password \
+  -X DELETE \
+  "http://cache-server:8080/delete?path=logs&days=7&recursive=true"
+```
+
+### 3. Static Content and Documentation Hosting
+
+Host documentation, static websites, and shared resources with version control and easy deployment.
+
+**Deploy documentation website:**
+
+```bash
+# Upload and extract documentation site
+tar czf docs.tar.gz -C /path/to/docs .
+curl -u cache-user:secure-password \
+  -X POST \
+  -F "file=@docs.tar.gz" \
+  -F "targz=true" \
+  -F "path=docs/v2.1/" \
+  http://cache-server:8080/upload
+```
+
+**Access documentation:**
+
+```bash
+# Browse documentation
+curl http://cache-server:8080/docs/v2.1/index.html
+curl http://cache-server:8080/docs/v2.1/api/reference.html
+```
+
+**Update and cleanup:**
+
+```bash
+# Remove old documentation versions
+curl -u cache-user:secure-password \
+  -X DELETE \
+  "http://cache-server:8080/upload?path=docs/v1.9"
+
+# Remove outdated static assets
+curl -u cache-user:secure-password \
+  -X DELETE \
+  "http://cache-server:8080/delete?path=docs&days=90&recursive=true"
+```
 
 ## [LICENSE](LICENSE)
 
