@@ -1,4 +1,3 @@
-[![GolangCI](https://golangci.com/badges/github.com/KubeRocketCI/krci-cache.svg)](https://golangci.com/r/github.com/KubeRocketCI/krci-cache)
 [![License](https://img.shields.io/github/license/KubeRocketCI/krci-cache)](/LICENSE)
 
 # GO Simple Uploader
