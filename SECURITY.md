@@ -16,18 +16,21 @@ Please refer to the [releases page](https://github.com/KubeRocketCI/krci-cache/r
 krci-cache handles file uploads and downloads, which introduces specific security considerations:
 
 ### Authentication & Authorization
+
 - Always deploy krci-cache behind proper authentication
 - Use strong credentials via `UPLOADER_UPLOAD_CREDENTIALS`
 - Never expose krci-cache directly to the internet without protection
 - Consider implementing additional authorization layers for production use
 
 ### File Upload Security
+
 - krci-cache implements protections against path traversal attacks
 - Tar.gz extraction includes safety checks against zip bombs and malicious archives
 - Size limits are enforced for tar.gz files (2GB per file, 8GB total)
 - Regular file uploads have no built-in size limits - implement external controls as needed
 
 ### Network Security
+
 - Use HTTPS/TLS in production deployments
 - Consider network policies and firewall rules
 - Deploy in a secure network environment
@@ -43,7 +46,7 @@ We take security vulnerabilities seriously. If you discover a security issue in 
 Instead, please report security vulnerabilities through one of these methods:
 
 1. **GitHub Security Advisory** (Preferred): Use the "Security" tab in this repository to create a private security advisory
-2. **Direct Contact**: Contact the KubeRocketCI maintainers through the [official community channels](https://docs.kuberocketci.io/community/)
+2. **Direct Contact**: Contact the KubeRocketCI maintainers through the email: [SupportEPMD-EDP@epam.com](mailto:SupportEPMD-EDP@epam.com)
 
 ### What to Include
 
@@ -81,11 +84,12 @@ When deploying krci-cache:
 ## Security Updates
 
 Security updates will be:
+
 - Clearly marked in release notes
 - Announced through KubeRocketCI community channels
 - Applied to supported versions when feasible
 
 For the latest security information, monitor:
+
 - [Release notes](https://github.com/KubeRocketCI/krci-cache/releases)
 - [KubeRocketCI documentation](https://docs.kuberocketci.io/)
-- [KubeRocketCI community channels](https://docs.kuberocketci.io/community/) 
